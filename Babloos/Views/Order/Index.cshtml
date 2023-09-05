@@ -1,0 +1,220 @@
+﻿@model Babloos.Models.AllMenu
+
+@{
+    ViewBag.Title = "Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<Babloos.Models.Menu> mainMenu = Model.menuList.Where(p => p.ParentId == 0).ToList();
+    List<Babloos.Models.Menu> pizza = Model.menuList.Where(p => p.ParentId == 27).ToList();
+    List<Babloos.Models.Menu> burger = Model.menuList.Where(p => p.ParentId == 28).ToList();
+    List<Babloos.Models.Menu> misc = Model.menuList.Where(p => p.ParentId == 29).ToList();
+    List<Babloos.Models.MenuItem> menuitem = Model.menuitemList.ToList();
+
+    string firstTab = string.Empty, secondTab = string.Empty, thirdTab = string.Empty, forthTab = string.Empty, fifthTab = string.Empty;
+    string firstDiv = string.Empty, secondDiv = string.Empty, thirdDiv = string.Empty, forthDiv = string.Empty, fifthDiv = string.Empty;
+
+    string tab = Request.QueryString["tab"];
+    tab = tab == null ? "1" : tab;
+}
+
+<ul class="nav nav-pills nav-justified nav-color">
+    @for (var index = 0; index < mainMenu.Count; index++)
+    {
+        <li class="@(tab.Equals((index + 1).ToString()) ? "active" : "") tab" id="@(index+1)"><a href="@("#" + mainMenu[index].Title.ToLower().Replace(".", ""))" data-toggle="tab">@Html.DisplayFor(modelItem => mainMenu[index].Title)</a></li>
+    }
+</ul>
+
+<div class="tab-content">
+    <!-- START DEAL -->
+    <div id="deals" class="tab-pane fade @(tab.Equals("1") ? "in active" : "")">
+        <h2>Deals we are offering</h2>
+        <table class="table table-responsive table-striped">
+            <thead>
+                <tr>
+                    <th>Deals</th>
+                    <th>Description</th>
+                    <th>Price (Rs.)</th>
+                    <th>Quatity</th>
+                    <th>Add to Cart</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model.menuitemList.Where(m => m.MenuId == 26)){
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Rate)</td>
+                        <td><input class="input-border quentity form-control" type="number" value="1" min="1"></td>
+                        <td>
+                            <button class="btn btn-danger add_to_cart"><span class="glyphicon glyphicon-plus"></span> Add to Cart</button>
+                            <input type="hidden" value="@item.Id" id="itemId" />
+                        </td>
+                    </tr>
+                }
+                
+            </tbody>
+        </table>
+    </div>
+    <!-- END DEAL -->
+
+    <!-- START PIZZA -->
+    <div id="pizza" class="tab-pane fade @(tab.Equals("2") ? "in active" : "")">
+        <h2>Pizza's we are offering</h2>
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs">
+                @for (var index = 0; index < pizza.Count; index++)
+                {
+                    <li class="@(index == 0 ? "active" : "")"><a href="@("#pizza"+index)" data-toggle="tab">@Html.DisplayFor(modelItem => pizza[index].Title)</a></li>
+                }
+            </ul>
+            <div class="tab-content">
+                @for (var index = 0; index < pizza.Count; index++)
+                {
+                    <div class="tab-pane @(index == 0 ? "in active" : "")" id="@("pizza"+index)">
+                        <h3>@Html.DisplayFor(modelItem => pizza[index].Title)</h3>
+                        <h5>(@Html.DisplayFor(modelItem => pizza[index].Description))</h5>
+                        <table class="table table-responsive table-striped table_left_list">
+                            <thead>
+                                <tr>
+                                    <th>Title/ Size</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Add to Cart</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.menuitemList.Where(m => m.MenuId == pizza[index].Id))
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.DisplayFor(modelItem => item.Title)<br />
+                                            <small>(@Html.DisplayFor(modelItem => pizza[index].Description))</small>
+                                        </td>
+                                        <td>@Html.DisplayFor(modelItem => item.Rate)</td>
+                                        <td><input class="input-border quentity form-control" type="number" value="1" min="1"></td>
+                                        <td>
+                                            <button class="btn btn-danger add_to_cart"><span class="glyphicon glyphicon-plus"></span> Add to Cart</button>
+                                            <input type="hidden" value="@item.Id" id="itemId" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- END PIZZA -->
+
+    <!-- START BURGER -->
+    <div id="burger" class="tab-pane fade @(tab.Equals("3") ? "in active" : "")">
+        <h2>burger's we are offering</h2>
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs">
+                @for (var index = 0; index < burger.Count; index++)
+                {
+                    <li class="@(index == 0 ? "active" : "")"><a href="@("#burger" + index)" data-toggle="tab">@Html.DisplayFor(modelItem => burger[index].Title)</a></li>
+                }
+            </ul>
+            <div class="tab-content">
+                @for (var index = 0; index < burger.Count; index++)
+                {
+                    <div class="tab-pane @(index == 0 ? "in active" : "")" id="@("burger" + index)">
+                        <h3>@Html.DisplayFor(modelItem => burger[index].Title)</h3>
+                        <h5>(@Html.DisplayFor(modelItem => burger[index].Description))</h5>
+                        <table class="table table-responsive table-striped table_left_list">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Add to Cart</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.menuitemList.Where(m => m.MenuId == burger[index].Id))
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Rate)</td>
+                                        <td><input class="input-border quentity form-control" type="number" value="1" min="1"></td>
+                                        <td>
+                                            <button class="btn btn-danger add_to_cart"><span class="glyphicon glyphicon-plus"></span> Add to Cart</button>
+                                            <input type="hidden" value="@item.Id" id="itemId" />
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- END BURGER -->
+
+    <!-- START MISC. -->
+    <div id="misc" class="tab-pane fade @(tab.Equals("4") ? "in active" : "")">
+        <h2>Misc's we are offering</h2>
+        <div class="tabbable tabs-left">
+            <ul class="nav nav-tabs">
+                @for (var index = 0; index < misc.Count; index++)
+                {
+                    <li class="@(index == 0 ? "active" : "")"><a href="@("#misc" + index)" data-toggle="tab">@Html.DisplayFor(modelItem => misc[index].Title)</a></li>
+                }
+            </ul>
+            <div class="tab-content">
+                @for (var index = 0; index < misc.Count; index++)
+                {
+                    <div class="tab-pane @(index == 0 ? "in active" : "")" id="@("misc" + index)">
+                        <h3>@Html.DisplayFor(modelItem => misc[index].Title)</h3>
+                        <h5>(@Html.DisplayFor(modelItem => misc[index].Description))</h5>
+                        <table class="table table-responsive table-striped table_left_list">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Add to Cart</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.menuitemList.Where(m => m.MenuId == misc[index].Id))
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                                        <td>@Html.DisplayFor(modelItem => item.Rate)</td>
+                                        <td><input class="input-border quentity form-control" type="number" value="1" min="1"></td>
+                                        <td>
+                                            <button class="btn btn-danger add_to_cart"><span class="glyphicon glyphicon-plus"></span> Add to Cart</button>
+                                            <input type="hidden" value="@item.Id" id="itemId"/>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <!-- END MISC. -->
+</div>
+
+<script>
+    activePageMenu(2);
+
+    var cart = [];
+    $(".tab").click(function () {
+        RefreshPageUrl("tab", "?tab=" + this.id);
+    });
+
+    function RefreshPageUrl(title, url) {
+        if (history.pushState) {
+            history.pushState(null, title, url);
+        } else {
+            alert("Your Browser will not Support HTML5");
+        }
+    }
+</script>

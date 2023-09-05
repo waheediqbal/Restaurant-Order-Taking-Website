@@ -1,0 +1,225 @@
+﻿@{
+    String tab = Request.ApplicationPath;
+    Babloos.Models.Order order = Babloos.Helpers.SessionHelper.Read<Babloos.Models.Order>("CART");
+    
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Babloo's Dine Inn &amp; Take Away - A fast food restaurant in Jhang, Punjab, Pakistan with healthy and hygienic food.">
+    <meta name="keywords" content="Fast Food in Jhang,Best Pizza in Jhang,Takeaway in Jhang,restaurant in Jhang,Home Delivery in Jhang,Family Environment in Jhang, Air conditioned environment,Coffee shop in Jhang">
+    <meta name="author" content="Babloo's Dine Inn &amp; Take Away">
+    <title>Babloo's Dine Inn &amp; Take Away</title>
+    <!-- You can use open graph tags to customize link previews.
+    Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
+    <meta property="og:url" content="http://www.babloos.pk" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Babloo's Dine Inn &amp; Take Away" />
+    <meta property="og:description" content="Babloo's Dine Inn &amp; Take Away - A fast food restaurant with healthy and hygienic food. Fast Food in Jhang, Best Pizza in Jhang" />
+    <meta property="og:image" content="http://www.babloos.pk/Images/Babloos.png" />
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    @Styles.Render("~/Content/css")
+        @Scripts.Render("~/bundles/modernizr")
+    <script>
+        function activePageMenu(n) {
+            debugger;
+            var li = $("#main_menu li").eq(n - 1);
+            li.css("background", "white");
+            li.children().css("color", "red");
+        }
+    </script>
+    <script>
+        (function (i, s, o, g, r, a, m) {
+            i['GoogleAnalyticsObject'] = r; i[r] = i[r] || function () {
+                (i[r].q = i[r].q || []).push(arguments)
+            }, i[r].l = 1 * new Date(); a = s.createElement(o),
+            m = s.getElementsByTagName(o)[0]; a.async = 1; a.src = g; m.parentNode.insertBefore(a, m)
+        })(window, document, 'script', '//www.google-analytics.com/analytics.js', 'ga');
+
+        ga('create', 'UA-67877546-1', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top menu-border">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a href="/" class="navbar-brand menu-logo">
+                    <img src="/Images/logo.png" class="img-responsive" alt="Babloo's" height="50" />
+                </a>
+            </div>
+            <div class="navbar-collapse collapse menu-font">
+                @*<ul class="nav navbar-nav navbar-right" id="cart_nav">
+                    <li id="itemQuantity">0</li>
+                    <li id="cart">
+                        <a>Cart</a>
+                        <ul>
+                            <li class="cart"></li>
+                            <li><button class="btn btn-danger btn_checkout" onclick="location.href = '/Order/Checkout'">Checkout me!</button></li>
+                        </ul>
+                    </li>
+                </ul>*@
+                @*@Html.Partial("_LoginPartial")*@
+                
+                <ul class="nav navbar-nav navbar-right" id="main_menu">
+                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                    <li>@Html.ActionLink("Order Now", "Index", "Order")</li>
+                    <li>@Html.ActionLink("Checkout", "Checkout", "Order")</li>
+                    <li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+                    @*@if(order.UserId != null) {
+                        <li>@Html.ActionLink("Welcome! " + order.FirstName, "ChangePassword", "UserInfo")</li>
+                        <li>@Html.ActionLink("Logoff", "Logoff", "UserInfo")</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Register", "Create", "UserInfo")</li>
+                        <li>@Html.ActionLink("Log in", "Login", "UserInfo")</li>
+                    }*@
+                    <li>
+                        <ul class="nav navbar-nav navbar-right" id="cart_nav">
+                            <li id="itemQuantity">0</li>
+                            <li id="cart" dir="rtl">
+                                <a>Cart</a>
+                                <ul>
+                                    <li class="cart"></li>
+                                    <li><button class="btn btn-danger btn_checkout" onclick="location.href = '/Order/Checkout'">!Checkout me</button></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+    </div>
+
+    <div class="container-fluid footer-style">
+        <footer>
+            <p>All rights reserved. &copy; @DateTime.Now.Year - Babloo's Dine Inn &amp; Takeaway</p>
+        </footer>
+    </div>
+    <script>
+        $.ajax({
+            url: "/Order/GetToCart",
+            type: "POST",
+            success: function (result) {
+                fillCart(result);
+            }
+        });
+
+        $(".add_to_cart").click(function () {
+            var itemid = $(this).next().val();
+            var quantity = $(this).parent().parent().find(".quentity").val();
+
+            $.ajax({
+                url: "/Order/AddToCart",
+                type: "POST",
+                data: { itemId: itemid, quantity: quantity },
+                success: function (result) {
+                    fillCart(result);
+                }
+            });
+        });
+
+        $(".quentity").keypress(function (e) {
+            if (e.which != 8 && e.which != 0 && (e.which < 48 || e.which > 57)) {
+                return false;
+            }
+        });
+
+        $("#cart a").click(function () {
+            $("#cart ul").slideToggle();
+        });
+        $(".body-content, footer").click(function () {
+            $("#cart ul").slideUp();
+        });
+
+        
+        
+
+        var color = ["#FFFFFF", "#FFFF99", "#B2FF99", "#CCFFFF", "#FFCCFF", "#D1FFFF", "#FFB2B2", "#E6CC80"]
+
+        rainbow(0);
+
+        function rainbow(i) {
+            var index = i % 8;
+            $("#cart").css("background", color[index]);
+            i = i + 1;
+            setTimeout("rainbow("+i+")", 1000);
+        }
+
+        function removeCheck(id) {
+            $.ajax({
+                url: "/Order/RemoveItemCart",
+                type: "POST",
+                data: { itemId: id },
+                success: function (result) {
+                    fillCart(result);
+                }
+            });
+        }
+
+        function fillCart(data) {
+            var items = JSON.parse(data);
+            $(".cartItem").html("");
+            var numberOfItem = 0;
+            var totalAmount = 0;
+            var tbody = '';
+            var table = '';
+            if (items.OrderDetails != "") {
+                $.each(items.OrderDetails, function (index, order) {
+                    tbody = tbody +
+                         "<tr>" +
+                         "<td><button class='btn btn-danger btn-sm checkout_remove' id='" + order.MenuItemId + "' onclick='removeCheck(this.id)'><span class='glyphicon glyphicon-remove-sign pull-left'></span> <span class='hidden-xs pull-right' style='margin-left:2px;'>Remove</span></button>" +
+                         "<td>Rs." + order.Amount + "</td>" +
+                         "<td>Rs." + order.Price + "</td>" +
+                         "<td>" + order.Quantity + "</td>" +
+                         "<td>" + order.Title + "</td>" +
+                         "<td><img src='../" + order.ImagePath + "' height='50'></td>" +
+                         "</tr>";
+                    numberOfItem = numberOfItem + 1;
+                    totalAmount = totalAmount + Number(order.Amount);
+                });
+                $(".btn_checkout").prop("disabled", false);
+            } else {
+                tbody = "<tr><td colspan='6' class='text-center'>No item in cart.</td></tr>";
+                $(".btn_checkout").prop("disabled", true);
+            }
+
+            table = '<table class="table table-responsive">' +
+                    '<thead>' +
+                    '<tr>' +
+                    '<td>Action</td>' +
+                    '<td>Amount</td>' +
+                    '<td>Unit Price</td>' +
+                    '<td>Qty</td>' +
+                    '<td>Name</td>' +
+                    '<td></td>' +
+                    '</tr>' +
+                    '</thead>' +
+                    '<tbody class="cartItem">' + tbody + '</tbody>' +
+                    '<tfoot><tr><td colspan="4">Total Amoumt Rs.<td><td>'+totalAmount+'</td></tr></tfoot>' +
+                    '</table>';
+
+            $(".cart").html(table);
+            $("#itemQuantity").html(numberOfItem);
+            $("#TotalAmount").val(totalAmount);
+        }
+    </script>
+    
+</body>
+</html>

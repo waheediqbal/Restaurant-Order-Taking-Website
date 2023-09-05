@@ -1,0 +1,116 @@
+﻿@model IEnumerable<Babloos.Models.MenuItem>
+
+@{
+    ViewBag.Title = "Home Page";
+    List<Babloos.Models.MenuItem> deals = Model.ToList();
+    string openDiv = "<div class='row'>";
+    string closeDiv = "</div>";
+}
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+        <li data-target="#myCarousel" data-slide-to="3"></li>
+    </ol>
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <img src="../Images/image-1.jpg" alt="Chania">
+        </div>
+        <div class="item">
+            <img src="../Images/image-2.jpg" alt="Chania">
+        </div>
+        <div class="item">
+            <img src="../Images/image-3.jpg" alt="Flower">
+        </div>
+        <div class="item">
+            <img src="../Images/image-4.jpg" alt="Flower">
+        </div>
+    </div>
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span><span class="sr-only">
+            Previous
+        </span>
+    </a><a class="right carousel-control" href="#myCarousel" role="button"
+           data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true">
+        </span><span class="sr-only">Next</span>
+    </a>
+</div>
+
+<div id="deal_slider">
+    <div id="wrapper">
+        <div id="slideBar">
+            @for (var index = 0; index < deals.Count; index++)
+            {
+                <div id="@index" class="mediaHolder" style="display:block;">
+                    <div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <img class="img-responsive img-style" src="@(deals[index].ImagePath)" alt="Deal 1" width="500" />
+                                <button class="btn btn-default btn-cart add_to_cart"><span class="glyphicon glyphicon-plus"></span> Add to cart</button>
+                                <input type="hidden" value="@deals[index].Id" id="itemId" />
+                                <input type="hidden" value="1" class="quentity" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 deal-detail">
+                                        @{ string[] description = deals[index].Description.Split('+'); }
+                                        @for (var i = 0; i < description.Length; i++)
+                                        {
+                                            @Html.DisplayFor(modelItem => description[i]) <br />
+                                        }
+
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 deal-no">
+                                        @Html.DisplayFor(modelItem => deals[index].Title)
+                                    </div>
+                                </div>
+                                <div class="circle"><span>Rs.@((int)deals[index].Rate)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+        <div id="slider_action">
+            <button type="button" id="pre" onclick="pre()"><span class="glyphicon glyphicon-chevron-left"></span></button>
+            <button type="button" id="next" onclick="next()"><span class="glyphicon glyphicon-chevron-right"></span></button>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    activePageMenu(1);
+
+    function pre() {
+        $("#pre").attr("onclick", "");
+        var mediaDiv = $("#slideBar .mediaHolder");
+        mediaDiv.first().before("<div class='mediaHolder' style='display:none;'>" + mediaDiv.last().html() + "<div>");
+        mediaDiv.first().prev().show("slow");
+        mediaDiv.last().hide("medium", function () {
+            $(this).remove();
+            $("#pre").attr("onclick", "pre()");
+        });
+    }
+
+    function next() {
+        $("#next").attr("onclick", "");
+        var mediaDiv = $("#slideBar .mediaHolder")
+        mediaDiv.last().after("<div class='mediaHolder'>" + mediaDiv.first().html() + "<div>");
+        mediaDiv.first().hide("medium", function () {
+            $(this).remove();
+            $("#next").attr("onclick", "next()");
+        });
+    }
+</script>

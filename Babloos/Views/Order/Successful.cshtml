@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Successful";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-xs-5">
+        <img class="img-responsive" src="../Images/sidebanner.jpg" />
+    </div>
+    <div class="col-xs-7">
+        <article id="thankyou">
+            <h1>
+                Thanks for shoping with Babloo's Dine Inn &amp; Take Away.
+                Your order been queed up and will be
+                deliverd soon.
+            </h1>
+            <div id="timer"></div>
+            <p>
+                Redirecting to home page in 5 seconds
+                click home page link if its not redirecting
+            </p>
+        </article>
+    </div>
+</div>
+
+<script>
+    activePageMenu(2);
+    timer(5);
+
+    function timer(sec) {
+        $("#timer").html(sec);
+        sec = sec - 1;
+        if(sec > -1) {
+            setTimeout("timer(" + sec + ")", 1000);
+        }
+        else {
+            location.href = "/Home";
+        }
+    }
+    
+</script>
+
